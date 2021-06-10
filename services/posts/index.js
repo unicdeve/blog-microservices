@@ -24,18 +24,24 @@ app.post('/posts', async (req, res) => {
 	};
 
 	await axios
-		.post('http://localhost:40004/events', {
-			type: 'PostCreate',
+		.post('http://localhost:4004/events', {
+			type: 'PostCreated',
 			data: {
 				id,
 				title,
 			},
 		})
 		.catch((err) => {
-			console.log(err);
+			console.log('err hkjh', err);
 		});
 
 	res.status(201).send(posts[id]);
+});
+
+app.post('/events', (req, res) => {
+	console.log('Received event: ', req.body.type);
+
+	res.send({});
 });
 
 app.listen(4000, () => {
