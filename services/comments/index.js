@@ -1,28 +1,34 @@
 const express = require('express');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const { randomBytes } = require('crypto');
 
 const app = express();
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
-const comments = {};
+const commentsByPostId = {};
 
 app.get('/posts/:id/comments', (req, res) => {
-	res.send(comments);
+	const postId = req.params.id;
+	res.send(commentsByPostId[postId] || []);
 });
 
-app.post('/posts/:id//comments', (req, res) => {
-	const id = randomBytes(4).toString('hex');
-	const { comment } = req.body;
+app.post('/posts/:id/comments', (req, res) => {
+	const commentId = randomBytes(4).toString('hex');
+	const postId = req.params.id;
+	const { content } = req.body;
 
-	comments[id] = {
-		id,
-		comment,
-	};
+	const comments = commentsByPostId[postId] || [];
 
-	res.status(201).send(comments[id]);
+	comments.push({
+		commentId,
+		content,
+	});
+
+	commentsByPostId[postId] = comments;
+
+	res.status(201).send(comments);
 });
 
 app.listen(4001, () => {
-	console.log('Listening on 4000');
+	console.log('Listening on 4001');
 });
